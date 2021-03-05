@@ -1,0 +1,52 @@
+version: "3"
+
+volumes:
+  database:
+
+networks:
+  frontend:
+  backend:
+
+services:
+  db:
+    container_name: db
+    build: ../db/
+    restart: always
+    environment: 
+      - MONGO_INITDB_DATABASE=${DB_NAME}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+    volumes:
+      - database:/data/db
+    networks:
+      - backend
+
+  api:
+    container_name: api
+    build: ../api/
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    command: npm run start
+    networks:
+      - frontend
+      - backend
+
+  frontend:
+    container_name: frontend
+    build: ../frontend/
+    restart: always
+    depends_on:
+      - api
+    environment:
+      - HTTPS_CERT=${HTTPS_CERT}
+      - HTTPS_KEY=${HTTPS_KEY}
+    command: npm run dev
+    ports: 
+      - 80:3000
+    networks:
+      - frontend

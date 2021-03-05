@@ -1,0 +1,4 @@
+api/node_modules
+db/dist
+node_modules
+.env
