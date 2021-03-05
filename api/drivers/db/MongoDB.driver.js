@@ -10,6 +10,7 @@ const connectionOptions = {
 class MongoDBDriver {
   static async connect(user, password, dbName) {
     const connectionURI = `mongodb://${user}:${password}@db/${dbName}`;
+    mongoose.connect(connectionURI, connectionOptions);
     console.log('MongoDB connected.');
     return mongoose;
   }
